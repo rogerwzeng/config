@@ -46,7 +46,7 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'morhetz/gruvbox'
 Plug 'jalvesaq/Nvim-R'
 "Plug 'ncm2/ncm2'
-"Plug 'roxma/nvim-yarp'
+Plug 'roxma/nvim-yarp'
 "Plug 'gaalcaras/ncm-R'
 "Plug 'vim-scripts/grep.vim'
 "Plug 'vim-scripts/CSApprox'
