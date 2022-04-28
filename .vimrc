@@ -1,5 +1,6 @@
-" vim-bootstrap 2022-03-08 12:13:09
-
+" My .vimrc file
+" Roger Z
+" Apr, 2022 - ?
 "*****************************************************************************
 "" Vim-Plug core
 "*****************************************************************************
@@ -14,6 +15,14 @@ let g:vim_bootstrap_langs = "python"
 let g:vim_bootstrap_editor = "vim"				" nvim or vim
 let g:vim_bootstrap_theme = "gruvbox"
 let g:vim_bootstrap_frams = ""
+
+" Required:
+filetype plugin indent on
+
+let g:make = 'gmake'
+if exists('make')
+        let g:make = 'make'
+endif
 
 "if !filereadable(vimplug_exists)
 "  if !executable(curl_exists)
@@ -34,64 +43,44 @@ call plug#begin(expand('~/./plugged'))
 "*****************************************************************************
 "" Plug install packages
 "*****************************************************************************
+"""File Navigation
 Plug 'scrooloose/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
-Plug 'puremourning/vimspector'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'airblade/vim-gitgutter'
-Plug 'majutsushi/tagbar'
-Plug 'dense-analysis/ale'
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
-Plug 'morhetz/gruvbox'
+"""Coding IDE
+Plug 'ervandew/supertab'
+Plug 'vim-scripts/grep.vim'
+"Plug 'klen/python-mode'
+"Plug 'davidhalter/jedi-vim'
 Plug 'jalvesaq/Nvim-R'
 "Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
+"Plug 'roxma/nvim-yarp'
 "Plug 'gaalcaras/ncm-R'
-"Plug 'vim-scripts/grep.vim'
+"Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
+"""Debugging
+Plug 'puremourning/vimspector'
+Plug 'majutsushi/tagbar'
+"""UI appearance
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+"Color Schemes
+Plug 'morhetz/gruvbox'
+Plug 'arcticicestudio/nord-vim'
+Plug 'glepnir/oceanic-material'
+"""Git Integration
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'tpope/vim-rhubarb' " required by fugitive to :Gbrowse
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'dense-analysis/ale'
+"""Markdown Integration
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+"""Unused
 "Plug 'vim-scripts/CSApprox'
 "Plug 'editor-bootstrap/vim-bootstrap-updater'
-"Plug 'tpope/vim-rhubarb' " required by fugitive to :Gbrowse
-Plug 'tpope/vim-fugitive'
 "Plug 'sagi-z/vimspectorpy', { 'do': { -> vimspectorpy#update() } }
 "Plug 'tpope/vim-commentary'
 "Plug 'godlygeek/tabular' | Plug 'tpope/vim-markdown'
-"Plug 'instant-markdown/vim-instant-markdown', {'for': 'markdown', 'do': 'yarn install'}
-"Plug 'instant-markdown/vim-instant-markdown', {'for': ['markdown', 'markdown.pandoc']}
-"Plug 'suan/vim-instant-markdown', {'for': 'markdown', 'do': 'yarn install'}
-
-if isdirectory('/usr/local/opt/fzf')
-  Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
-else
-  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --bin' }
-  Plug 'junegunn/fzf.vim'
-endif
-let g:make = 'gmake'
-if exists('make')
-        let g:make = 'make'
-endif
-Plug 'Shougo/vimproc.vim', {'do': g:make}
-
-"" Vim-Session
-"Plug 'xolox/vim-misc'
-"Plug 'xolox/vim-session'
-
-"" Snippets
-"Plug 'SirVer/ultisnips'
-"Plug 'honza/vim-snippets'
-
-"*****************************************************************************
-"" Custom bundles
-"*****************************************************************************
-
-" python
-"" Python Bundle
-Plug 'davidhalter/jedi-vim'
-Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
-
-
-"*****************************************************************************
-"*****************************************************************************
+"Plug 'Shougo/vimproc.vim', {'do': g:make}
 
 "" Include user's extra bundle
 if filereadable(expand("~/.rc.local.bundles"))
@@ -99,10 +88,9 @@ if filereadable(expand("~/.rc.local.bundles"))
 endif
 
 call plug#end()
-
-" Required:
-filetype plugin indent on
-
+" END of plugin loading
+"*****************************************************************************
+"*****************************************************************************
 
 "*****************************************************************************
 "" Basic Setup
@@ -154,6 +142,7 @@ let g:session_command_aliases = 1
 syntax on
 set ruler
 set number
+set termguicolors
 
 "My Own settings
 set relativenumber
@@ -166,7 +155,7 @@ set incsearch
 set colorcolumn=81
 
 let no_buffers_menu=1
-" colorscheme gruvbox
+colorscheme oceanic_material
 
 " Better command line completion 
 set wildmenu
@@ -180,7 +169,7 @@ set guioptions=egmrti
 set gfn=Monospace\ 10
 
 if has("gui_running")
-  if has("gui_mac") || has("gui_macvim")
+  if has("gui_mac") || has("ui_macvim")
     set guifont=Menlo:h12
     set transparency=7
   endif
@@ -209,6 +198,9 @@ if &term =~ '256color'
   set t_ut=
 endif
 
+"" Spell settings
+nnoremap <Leader>sp :setlocal spell! spelllang=en_us<CR>
+nnoremap <Leader>usp :set nospell<CR>
 
 "" Disable the blinking cursor.
 "set gcr=a:blinkon0
@@ -298,7 +290,7 @@ if !exists('*s:setupWrapping')
   function s:setupWrapping()
     set wrap
     set wm=2
-    set textwidth=79
+    set textwidth=80
   endfunction
 endif
 
@@ -401,7 +393,10 @@ let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 let g:UltiSnipsEditSplit="vertical"
 
 " ale
-let g:ale_linters = {}
+let g:ale_linters = {'python': ['pylint']}
+
+" color scheumes
+let g:oceanic_material_allow_reverse=1
 
 " Tagbar
 nmap <silent> <F4> :TagbarToggle<CR>
@@ -471,14 +466,17 @@ augroup vimrc-python
 augroup END
 
 " jedi-vim
+let g:jedi#auto_initialization = 1
+let g:jedi#auto_vim_configuration = 1
+let g:jedi#popup_select_first = 1
 let g:jedi#popup_on_dot = 0
 let g:jedi#goto_assignments_command = "<leader>g"
 let g:jedi#goto_definitions_command = "<leader>d"
 let g:jedi#documentation_command = "K"
-let g:jedi#usages_command = "<leader>n"
-let g:jedi#rename_command = "<leader>r"
+let g:jedi#usages_command = "<Leader>n"
+let g:jedi#rename_command = "<Leader>r"
 let g:jedi#show_call_signatures = "0"
-let g:jedi#completions_command = "<C-Space>"
+let g:jedi#completions_command = "<Leader`>c"
 let g:jedi#smart_auto_mappings = 0
 
 " ale
@@ -576,20 +574,8 @@ endif
    \    'vimspectorPC':         999,
    \ }
 
-"instant markdown
-"Uncomment to override defaults:
-"filetype plugin on
-"let g:instant_markdown_slow = 1
-"let g:instant_markdown_autostart = 1
-"let g:instant_markdown_open_to_the_world = 0
-"let g:instant_markdown_allow_unsafe_content = 1
-"let g:instant_markdown_allow_external_content = 1
-"let g:instant_markdown_mathjax = 1
-"let g:instant_markdown_mermaid = 0
-"let g:instant_markdown_logfile = '/tmp/instant_markdown.log'
-"let g:instant_markdown_autoscroll = 0
-"let g:instant_markdown_port = 8877
-"let g:instant_markdown_python = 1
+let g:ale_python_executable='python3'
+let g:ale_python_pylint_use_global=1
 
 "Markdown Preview
 nnoremap <leader>md :MarkdownPreview<CR>
@@ -695,6 +681,30 @@ let g:mkdp_filetypes = ['markdown']
 nmap ) <Plug>(GitGutterNextHunk)
 nmap ( <Plug>(GitGutterPrevHunk)
 let g:gitgutter_enabled = 1
-let g:gitgutter_map_keys = 0
-let g:gitgutter_highlight_linenrs = 1
+let g:gitgutter_map_keys = 1
+let g:gitgutter_highlight_lines = 0
+let g:gitgutter_set_sign_backgrounds = 1
+let g:gitgutter_sign_added = '+'
+let g:gitgutter_sign_modified = '*'
+let g:gitgutter_sign_removed = '-'
+let g:gitgutter_sign_modified_removed = '*-'
 
+"GitGutter Command Key Mapping
+nnoremap <leader>gga :GitGutterEnable<CR>
+nnoremap <leader>ggx :GitGutterDisable<CR>
+nnoremap <leader>ggt :GitGutterToggle<CR>
+nnoremap <leader>ggf :GitGutterFold<CR>
+nnoremap <leader>lha :GitGutterLineHighlightsEnable<CR>
+nnoremap <leader>lhx :GitGutterLineHighlightsDisable<CR>
+nnoremap <leader>lht :GitGutterLineHighlightsToggle<CR>
+
+"Python Mode
+let g:pymode_python = 'python3'
+" Override go-to.definition key shortcut to Ctrl-]
+let g:pymode_rope_goto_definition_bind = "<C-]>"
+
+" Override run current python file key shortcut to Ctrl-Shift-e
+let g:pymode_run_bind = "<C-S-e>"
+
+" Override view python doc key shortcut to Ctrl-Shift-d
+let g:pymode_doc_bind = "<C-S-d>"
