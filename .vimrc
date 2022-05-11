@@ -101,6 +101,13 @@ set fileencoding=utf-8
 set fileencodings=utf-8
 set ttyfast
 
+"" Insert mode with 5 sec time-out
+set updatetime=5000
+au CursorHoldI * stopinsert
+
+"" Set spell autocomplete to Ctrl-N/P
+set complete+=k
+
 "" Fix backspace indent
 set backspace=indent,eol,start
 
@@ -200,7 +207,7 @@ if &term =~ '256color'
 endif
 
 "" Spell settings
-nnoremap <Leader>sp :setlocal spell! spelllang=en_us<CR>
+nnoremap <Leader>sp :setlocal spell spelllang=en_us<CR>
 nnoremap <Leader>usp :set nospell<CR>
 
 "" Disable the blinking cursor.
@@ -381,17 +388,17 @@ if executable('rg')
   command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
 endif
 
-cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
-nnoremap <silent> <leader>b :Buffers<CR>
-nnoremap <silent> <leader>e :FZF -m<CR>
-"Recovery commands from history through FZF
-nmap <leader>y :History:<CR>
+"cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
+"nnoremap <silent> <leader>b :Buffers<CR>
+"nnoremap <silent> <leader>e :FZF -m<CR>
+""Recovery commands from history through FZF
+"nmap <leader>y :History:<CR>
 
-" snippets
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<c-b>"
-let g:UltiSnipsEditSplit="vertical"
+"" snippets
+"let g:UltiSnipsExpandTrigger="<tab>"
+"let g:UltiSnipsJumpForwardTrigger="<tab>"
+"let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+"let g:UltiSnipsEditSplit="vertical"
 
 " ale
 let g:ale_linters = {'python': ['pylint']}
