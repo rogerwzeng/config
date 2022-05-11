@@ -51,7 +51,7 @@ Plug 'ervandew/supertab'
 Plug 'vim-scripts/grep.vim'
 "Plug 'klen/python-mode'
 "Plug 'davidhalter/jedi-vim'
-Plug 'jalvesaq/Nvim-R'
+Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
 "Plug 'ncm2/ncm2'
 "Plug 'roxma/nvim-yarp'
 "Plug 'gaalcaras/ncm-R'
@@ -110,8 +110,9 @@ set softtabstop=0
 set shiftwidth=4
 set expandtab
 
-"" Map leader to ,
+"" Map leaders
 let mapleader=','
+let maplocalleader='\\'
 
 "" Enable hidden buffers
 set hidden
@@ -394,12 +395,16 @@ let g:UltiSnipsEditSplit="vertical"
 
 " ale
 let g:ale_linters = {'python': ['pylint']}
+let g:ale_lint_on_insert_leave=1
+let g:ale_lint_on_save=1
+nnoremap <leader>ln :ALENextWrap<CR>
+nnoremap <leader>lp :ALEPreviousWrap<CR>
 
 " color scheumes
 let g:oceanic_material_allow_reverse=1
 
 " Tagbar
-nmap <silent> <F4> :TagbarToggle<CR>
+nnoremap <silent> <leader>tt :TagbarToggle<CR>
 let g:tagbar_autofocus = 1
 
 " Disable visualbell
