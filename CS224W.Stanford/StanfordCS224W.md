@@ -1,14 +1,3 @@
----
-title: "Stanford 224W"
-author: "Roger Zeng"
-date: "12/31/2021"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## Stanford CS224W Machine Learning w/ Graph
 #### Lecture Notes
 
