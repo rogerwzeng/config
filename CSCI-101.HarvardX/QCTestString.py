@@ -9,11 +9,13 @@ Name: Roger W Zeng
 def isValidString(s):
 
     isValid = True
+    total_p = 0
+    total_d = 0
 
     # Some initial sanity checks
     if not s.startswith('Q'):
         isValid = False
-        return isValid
+        return [isValid, (total_p + total_d), total_p, total_d]
 
     # Parse all QC batches in a single line record
     tests = s.split("Q")
@@ -23,10 +25,22 @@ def isValidString(s):
 
     # Loop through all QC batches
     for i in tests:
+        #Validate in text form first
         txtValid, Q, p, d = parseNumsTxt(i)
-        if not txtValid or not numsValid(Q, p, d):
+        if not txtValid:
             isValid = False
-    return isValid
+            return [isValid, (total_p + total_d), total_p, total_d]
+
+        #Now validate the numbers
+        numValid, inc_p, inc_d = numsValid(Q, p, d)  
+        if not numValid:
+            isValid = False
+            return [isValid, (total_p + total_d), total_p, total_d]
+        else:
+            total_p += inc_p
+            total_d += inc_d
+            
+    return [isValid, (total_p + total_d), total_p, total_d]
 
 # function call by isValidString() to parse Q p d as strings
 # includes string level validity checks 
@@ -57,13 +71,14 @@ def parseNumsTxt(case):
 # includes numeric validity checks
 def numsValid(txt_Q, txt_p, txt_d):
 
+
     for i in [txt_Q, txt_p, txt_d]:
-        # See if all of the numbers are numeric
+        # See if all of the numbers are numeri
         if i.isdecimal() is False:
-            return False
+            return [False, 0, 0]
         # See if there is any leading zero
         if i[0] == '0' and len(i.strip()) > 1:
-            return False
+            return [False, 0, 0]
 
     # Passes all tests, convert to numbers
     Q = int(txt_Q.strip())
@@ -72,15 +87,14 @@ def numsValid(txt_Q, txt_p, txt_d):
 
     # See if it's a empty batch
     if Q == 0:
-        return False
+        return [False, 0, 0]
     # See if the total adds up
     if Q != p + d:
-        return False
+        return [False, 0, 0]
     
     # All tests passed, this QA batch is valid
-    return True
+    return [True, p, d]
 
-'''
 # main program used to call isValidString()
 if __name__ == "__main__":
 
@@ -88,6 +102,4 @@ if __name__ == "__main__":
     f=open('testcases.txt', 'r')
     for x in f:
         print(f"{isValidString(x)} QC case |{x[:-1]}|")
-'''
-
 
