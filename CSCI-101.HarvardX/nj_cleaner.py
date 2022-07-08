@@ -5,9 +5,10 @@ PSET #4: Managing Data Exercise 2
 Name: Roger W Zeng
 '''
 
-import pandas as pd 
-import numpy as np 
+import pandas as pd
+import numpy as np
 import mysql.connector as sql
+
 
 # submssion flag, set to False in dev and unit testing
 submission = True
@@ -22,7 +23,7 @@ else:
     print(f"Read in {len(df)} rows and {len(df.columns)} columns")
 
 # drop rows if all elements are blank
-df.dropna(how="all", inplace = True)
+df.dropna(how="all", inplace=True)
 
 # check for invalid integer numbers
 for i, j in col_dtypes.items():
@@ -34,7 +35,7 @@ for i, j in col_dtypes.items():
 # drop NaN records
 df.dropna(how="any", inplace = True)
 
-if not submission:
+if submission:
     df.to_csv('/autograder/submission/nj_state_teachers_salaries.csv', index=False)  # submission spec
 else:
     print(df.head())
@@ -72,7 +73,8 @@ mydb.commit()
 mycursor.execute("select count(*) from nj_state_teachers_salaries;")
 
 if not submission:
-        print(f"Loaded {mycursor[0]} records into 'nj_teachers_salaries' table")
+    for i in mycursor:
+        print(f"Loaded {i[0]} records into 'nj_teachers_salaries' table")
 
 # Conclude DB transaction
 mydb.close()
