@@ -10,11 +10,11 @@ import numpy as np
 import mysql.connector as sql
 
 
-# submssion flag, set to False in dev and unit testing
+# submssion flag, set to False in dev and unit test
 submission = True
 
 # dictionary of column types to be used later
-col_dtypes = {'last_name': str, 'first_name': str, 'county': str, 'district': str, 'school': str, 'primary_job': str, 'fte': float, 'salary': int, 'certificate': str, 'subcategory': str, 'teaching_route': str,	'highly_qualified': str, 'experience_district': int, 'experience_nj': int, 'experience_total': int}
+col_dtypes = {'last_name': str, 'first_name': str, 'county': str, 'district': str, 'school': str, 'primary_job': str, 'fte': float, 'salary': int, 'certificate': str, 'subcategory': str, 'teaching_route': str, 'highly_qualified': str, 'experience_district': int, 'experience_nj': int, 'experience_total': int}
 
 if submission:
     df = pd.read_csv('/autograder/source/nj_state_teachers_salaries.csv', on_bad_lines="warn", index_col=None, header=0, skipinitialspace=True)    # submission spec
@@ -25,12 +25,14 @@ else:
 # drop rows if all elements are blank
 df.dropna(how="all", inplace=True)
 
-# check for invalid integer numbers
+# check for invalid string and numbers in each column and set them to NaN
 for i, j in col_dtypes.items():
     if j == int:
         df[i] = df[i].replace('[^0-9]', np.NaN, regex=True)
-    elif j == float:
+    elif j == float:  
         df[i] = df[i].replace('[^0-9.]', np.NaN, regex=True)
+    else:  # for string columns, strip leading and trailing blanks
+        df[i] = df[i].str.strip()
 
 # drop NaN records
 df.dropna(how="any", inplace = True)
@@ -38,7 +40,7 @@ df.dropna(how="any", inplace = True)
 if submission:
     df.to_csv('/autograder/submission/nj_state_teachers_salaries.csv', index=False)  # submission spec
 else:
-    print(df.head())
+    print(df.loc[:,['last_name','first_name','county','district']].head())
     print(f"Clean Dataframe is {len(df)} rows and {len(df.columns)} columns")
     df.to_csv('nj_state_teachers_salaries_cleaned.csv', index=False)  # unit test spec
 
