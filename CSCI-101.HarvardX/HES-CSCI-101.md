@@ -35,3 +35,52 @@ $$R^2=1-\frac{\Sigma_{i=1}^N (x_i-y_i)^2}{\Sigma_{i=1}^N (x_i-\overline{x})^2}$$
 
 logical expressiuon short-circuit evaluation: stop if the first expression is false in an "AND" evaluation
 
+### Python Error Handling
+
+```
+try:
+    # run these code
+except [error type]:
+    # what to do when error occurs
+    # can have multiple "excepts" for different error types
+    # OSError, ValueError, RuntimeError, CustomError etc.
+else:
+    # run these code when there is no exception
+finally:
+    # run these regardless, useful for clean up code
+```
+
+### Pandas dataframe filtering
+```
+df_filtered = df[(df['col_name'] == value) & (df['col_2'] == val2)]
+```
+
+Note the difference between the logical 'and' 'or' and bitwise '&' '|'
+
+Pandas load data as String by default to convert, use sth like:
+
+```
+df['col_1'] = pd.to_numeric(df['col_1'], errors='coerce')
+```
+
+### Pandas pivot table
+
+```
+df.pivot_table(index='', columns=[], values=[], aggfunc='')
+```
+
+there is also a df.pivot() function, a subset of pivot_table()
+
+### String functions
+```
+str.lower/upper/title
+str.replace(' ', '')
+```
+
+### Pandas dataframe merge, dedupe, insert
+```
+pd.merge()
+df.drop_duplicates()
+df.insert(col_#, 'col_name', fill_in_value)
+```
+

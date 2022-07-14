@@ -17,9 +17,9 @@ submission = True
 col_dtypes = {'last_name': str, 'first_name': str, 'county': str, 'district': str, 'school': str, 'primary_job': str, 'fte': float, 'salary': int, 'certificate': str, 'subcategory': str, 'teaching_route': str, 'highly_qualified': str, 'experience_district': int, 'experience_nj': int, 'experience_total': int}
 
 if submission:
-    df = pd.read_csv('/autograder/source/nj_state_teachers_salaries.csv', on_bad_lines="warn", index_col=None, header=0, skipinitialspace=True)    # submission spec
+    df = pd.read_csv('/autograder/source/nj_state_teachers_salaries.csv', on_bad_lines='skip', index_col=None, header=0, skipinitialspace=True)    # submission spec
 else: 
-    df = pd.read_csv('nj_state_teachers_salaries.csv', on_bad_lines="warn", index_col=None, header=0, skipinitialspace=True)  # unit test spec
+    df = pd.read_csv('nj_state_teachers_salaries.csv', on_bad_lines='skip', index_col=None, header=0, skipinitialspace=True)  # unit test spec
     print(f"Read in {len(df)} rows and {len(df.columns)} columns")
 
 # drop rows if all elements are blank
@@ -62,7 +62,7 @@ mycursor.execute(tbCreate)
 
 # load data from csv file into database table
 if submission: 
-    loadData = "LOAD DATA INFILE '/autograder/nj_state_teachers_salaries.csv' INTO TABLE nj_state_teachers_salaries FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;"  # submission spec
+    loadData = "LOAD DATA INFILE '/autograder/submission/nj_state_teachers_salaries.csv' INTO TABLE nj_state_teachers_salaries FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;"  # submission spec
 else:
     loadData = "LOAD DATA INFILE '/var/lib/mysql-files/nj_state_teachers_salaries_cleaned.csv' INTO TABLE nj_state_teachers_salaries FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;"  # unit test spec
 
