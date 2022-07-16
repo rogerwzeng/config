@@ -19,7 +19,7 @@ def CleanColumnHeading(dfx):
     
     cols_dict = dict(zip(cols_from, cols_to))
 
-    dfx.rename(columns=cols_dict)
+    dfx.rename(cols_dict, axis=1, inplace=True)
     
     return dfx
 
@@ -33,25 +33,21 @@ def StandardizeColNames(df):
     '''
     cols = df.columns
     for i in cols:
-        if i.find('zip') >= 0:
-            df.rename(columns={i:'zip'})
-        if i.find('city') >= 0:
-            df.rename(columns={i:'city'})
-        if i.find('state') >= 0:
-            df.rename(columns={i:'state'})
-
+        for j in ['zip', 'city', 'state']:
+            if i.find(j) >= 0:
+                df.rename(columns={i: j}, inplace=True)
     return df
 
 
 def CleanQCTest(df_test):
     # Validate the QC test string for each plant and add stats cols
-    ds = df_test['TestResults'].apply(lambda x: isValidString(str(x)))
+    ds = df_test['TestResults'.lower()].apply(lambda x: isValidString(str(x)))
 
     # Convert Series to Dataframe
-    dfa = pd.DataFrame(ds.tolist(), columns=['isValid', 'TotalTests', 'Pass', 'Defect'])
+    dfa = pd.DataFrame(ds.tolist(), columns=['is_valid', 'total_tests', 'pass', 'defect'])
 
     # Adjust status col
-    dfa['isValid'] = dfa['isValid'].apply(lambda x: 'yes' if x else 'no')
+    dfa['is_valid'] = dfa['is_valid'].apply(lambda x: 'yes' if x else 'no')
 
     # Merge with original table 
     df = df_test.join(dfa)
@@ -155,7 +151,7 @@ def numsValid(txt_Q, txt_p, txt_d):
 # main function of bigtest
 def main():
     # submssion flag, set to False in dev and unit test
-    submission = False
+    submission = True
 
     if submission:
         subdir = '/autograder/source/'
@@ -187,19 +183,24 @@ def main():
 
 
     # merge into final data frame
-    df_new = df_test.merge(df_zip)
-    df_new = df.new.merge(df_defects)
+    df_new = df_zip.merge(df_test, on='zip', how='outer')
+    df_new = df_new.merge(df_defects, on='state', how='outer')
 
     # result output variables
-    defect_result = df_new[df['defects'] > 8000]['state']
-    pass_result = df_new[df['pass'] > 10]['city']
-    pop_result = df_new[(df['pass'] > 10) & ( df['defects'] > 10000) & \
-            (df['irs_estimated_population'] > 30000)]['plant']
+    defect_result = set(df_new[df_new['total_defects'] > 8000]['state'])
+    pass_result = set(df_new[df_new['pass'] > 10]['city'])
+    pop_result = set(df_new[(df_new['pass'] > 10) & \
+            ( df_new['total_defects'] > 10000) & \
+            (df_new['irs_estimated_population'] > 30000)]\
+            ['plant'])
 
     if not submission:
-        print(f"defect result: {defect_result}")
-        print(f"pass result: {pass_result}")
-        print(f"pop result: {pop_result}")
+        print(f"defect result:\n{defect_result}")
+        print(f"pass result:\n{pass_result}")
+        print(f"pop result:\n{pop_result}")
+        with pd.ExcelWriter('out_bigtest.xlsx', engine='openpyxl') as writer:
+            df_new.to_excel(writer)
+            writer.save()
 
 
 if __name__ == '__main__':
