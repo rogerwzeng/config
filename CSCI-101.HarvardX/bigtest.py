@@ -1,5 +1,5 @@
 '''
-I-101 Foundations of Data Science and Engineering
+CSCI-101 Foundations of Data Science and Engineering
 Term: 2022 Summer
 PSET #5: Exploratory Data Analysis
 Name: Roger W Zeng
@@ -44,7 +44,8 @@ def CleanQCTest(df_test):
     ds = df_test['TestResults'.lower()].apply(lambda x: isValidString(str(x)))
 
     # Convert Series to Dataframe
-    dfa = pd.DataFrame(ds.tolist(), columns=['is_valid', 'total_tests', 'pass', 'defect'])
+    dfa = pd.DataFrame(ds.tolist(), columns=['is_valid', 
+        'total_tests', 'pass', 'defect'])
 
     # Adjust status col
     dfa['is_valid'] = dfa['is_valid'].apply(lambda x: 'yes' if x else 'no')
@@ -77,13 +78,13 @@ def isValidString(s):
 
     # Loop through all QC batches
     for i in tests:
-        #Validate in text form first
+        # Validate in text form first
         txtValid, Q, p, d = parseNumsTxt(i)
         if not txtValid:
             isValid = False
             return [isValid, (total_p + total_d), total_p, total_d]
 
-        #Now validate the numbers
+        # Now validate the numbers
         numValid, inc_p, inc_d = numsValid(Q, p, d)  
         if not numValid:
             isValid = False
@@ -93,6 +94,7 @@ def isValidString(s):
             total_d += inc_d
             
     return [isValid, (total_p + total_d), total_p, total_d]
+
 
 # function call by isValidString() to parse Q p d as strings
 # includes string level validity checks 
@@ -119,10 +121,10 @@ def parseNumsTxt(case):
     # string parsing successful, return values
     return True, txt_Q, txt_p, txt_d
 
+
 # function to verify the validity of p d and Q as numbers
 # includes numeric validity checks
 def numsValid(txt_Q, txt_p, txt_d):
-
 
     for i in [txt_Q, txt_p, txt_d]:
         # See if all of the numbers are numeri
@@ -149,59 +151,92 @@ def numsValid(txt_Q, txt_p, txt_d):
 
 
 # main function of bigtest
-def main():
-    # submssion flag, set to False in dev and unit test
-    submission = True
+# submssion flag, set to False in dev and unit test
+submission = True
 
-    if submission:
-        subdir = '/autograder/source/'
-    else:
-        subdir = ''
+if submission:
+    subdir = '/autograder/source/'
+else:
+    subdir = ''
 
-    # load QC results data
-    df_test = pd.read_csv(subdir + 'QCTest.csv', on_bad_lines='skip', \
-            index_col=None, header=0, skipinitialspace=True)
+# load QC results data
+df_test = pd.read_csv(subdir + 'QCTest.csv', on_bad_lines='skip', 
+        index_col=None, header=0, skipinitialspace=True)
 
-    # load zip data
-    load_cols = ['Zip Code', 'Primary City', 'STATE', 'IRS Estimated population']
-    df_zip = pd.read_csv(subdir + 'zip_code_database.csv',
-            on_bad_lines='skip', usecols = load_cols,
-            index_col=None, header=0, skipinitialspace=True)
+# load zip data
+load_cols = ['Zip Code', 'Primary City', 'STATE', 'IRS Estimated population']
+df_zip = pd.read_csv(subdir + 'zip_code_database.csv',
+        on_bad_lines='skip', usecols = load_cols,
+        index_col=None, header=0, skipinitialspace=True)
 
-    # load defects by state data
-    df_defects = pd.read_csv(subdir + 'defect_returns_by_state.csv',
-            on_bad_lines='skip', index_col=None, header=0,
-            skipinitialspace=True) 
+# load defects by state data
+df_defects = pd.read_csv(subdir + 'defect_returns_by_state.csv',
+        on_bad_lines='skip', index_col=None, header=0,
+        skipinitialspace=True) 
 
-    # clean and standardize column headings
-    for df in [df_test, df_zip, df_defects]:
-        df = CleanColumnHeading(df)
-        df = StandardizeColNames(df)
+# clean and standardize column headings
+for df in [df_test, df_zip, df_defects]:
+    df = CleanColumnHeading(df)
+    df = StandardizeColNames(df)
 
-    # clean up QC test results
-    df_test = CleanQCTest(df_test)
-
-
-    # merge into final data frame
-    df_new = df_zip.merge(df_test, on='zip', how='outer')
-    df_new = df_new.merge(df_defects, on='state', how='outer')
-
-    # result output variables
-    defect_result = set(df_new[df_new['total_defects'] > 8000]['state'])
-    pass_result = set(df_new[df_new['pass'] > 10]['city'])
-    pop_result = set(df_new[(df_new['pass'] > 10) & \
-            ( df_new['total_defects'] > 10000) & \
-            (df_new['irs_estimated_population'] > 30000)]\
-            ['plant'])
-
-    if not submission:
-        print(f"defect result:\n{defect_result}")
-        print(f"pass result:\n{pass_result}")
-        print(f"pop result:\n{pop_result}")
-        with pd.ExcelWriter('out_bigtest.xlsx', engine='openpyxl') as writer:
-            df_new.to_excel(writer)
-            writer.save()
+# clean up QC test results
+df_test = CleanQCTest(df_test)
 
 
-if __name__ == '__main__':
-    main()
+# merge into final data frame
+df_new = df_zip.merge(df_test)
+df_new = df_new.merge(df_defects)
+
+'''
+# different style merge, but was too big for the task
+df_new = df_new.merge(df_defects, on='state', how='outer')
+df_new = df_new.merge(df_defects, on='state', how='outer')
+'''
+
+# result output variables
+# Question 10.a 
+defect_result = set(df_new[df_new['total_defects'] > 8000]['state'])
+# Question 10.b
+pass_result = set(df_new[df_new['pass'] > 10]['city'])
+# Question 10.c
+pop_result = set(df_new[(df_new['pass'] > 10) & \
+        ( df_new['total_defects'] > 10000) & \
+        (df_new['irs_estimated_population'] > 30000)]\
+        ['plant'])
+'''
+# different way of solving Q.10, but the autograder didn't like it
+# Q 10.a
+defect_result = []
+for i in set(df_zip['state']):
+    if df_new[df_new['state'] == i]['defect'].sum() > 8000:
+        defect_result.append(i)
+
+# city list used in the next two questions
+cities = set(df_test.merge(df_zip)['city'])
+
+# Q 10.b
+pass_result = []
+for i in cities:
+    if df_new[df_new['city'] == i]['defect'].sum() > 10:
+        pass_result.append(i)
+
+# Q 10.c
+pop_result = []
+for i in set(df_test['plant']):
+    if ((df_new[df_new['plant'] == i]['pass'].sum() > 10) & 
+        (df_new[df_new['plant'] == i]['defect'].sum() > 10000) & 
+        (df_new[df_new['plant'] == i]['irs_estimated_population'].
+            sum() > 30000)):
+        pop_result.append(i)
+
+'''
+
+# print out result in unit testing
+if not submission:
+    print(f"defect result:\n{defect_result}")
+    print(f"pass result:\n{pass_result}")
+    print(f"pop result:\n{pop_result}")
+    with pd.ExcelWriter('out_bigtest.xlsx', engine='openpyxl') as writer:
+        df_new.to_excel(writer)
+        writer.save()
+
