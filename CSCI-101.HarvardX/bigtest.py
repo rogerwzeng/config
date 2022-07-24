@@ -152,7 +152,7 @@ def numsValid(txt_Q, txt_p, txt_d):
 
 # main function of bigtest
 # submssion flag, set to False in dev and unit test
-submission = True
+submission = False
 
 if submission:
     subdir = '/autograder/source/'

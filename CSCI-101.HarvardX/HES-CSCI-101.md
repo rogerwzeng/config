@@ -31,9 +31,13 @@ $$R^2=1-\frac{\Sigma_{i=1}^N (x_i-y_i)^2}{\Sigma_{i=1}^N (x_i-\overline{x})^2}$$
 - How's $r$ and $R^2$ related?
     - in univariable linear regression: $R^2 = Cor(X,Y)^2 = r^2$
     - in multivariable linear regression: $R^2 = Cor(\hat Y, Y)^2$
-- NB: correlation does no equal to causation
-
 logical expressiuon short-circuit evaluation: stop if the first expression is false in an "AND" evaluation
+
+### SQL 
+the "group by" error trap?
+
+#### file I/O
+Infile & Outfile fields termninated by line terminated by
 
 ### Python Error Handling
 
@@ -84,3 +88,56 @@ df.drop_duplicates()
 df.insert(col_#, 'col_name', fill_in_value)
 ```
 
+### Storytelling with Data
+
+#### Data -> Information -> Knowledge -> Action or Decision
+#### pre-attentive attributes: Color, size, orientation, texture
+
+### Object Oriented Programming with Python
+
+class v.s. Name Space
+
+```
+class bank_account:
+pass
+
+acct1 = bank_account   #  Name space
+
+acct2 = bank_account()  # object class
+
+# default constructor method
+__main__   
+
+# custom constructor method
+def __init__(self, account_number, balance)  # 1st argument always 'self'
+    self.aNum = account_number  # public instance variable 
+    self.__aBal = balance   # private instance variable  with '__'
+
+class_variable1
+class_variable2
+
+def class_method_1:
+
+```
+
+NOTE: Python does NOT reserve class instance after it's instantiated, CRAZY!
+
+```
+acct1 = bank_account()
+acct1.some_faulty_variable = 1000
+
+print(acct.some_faulty_variable)
+
+Output: 1000
+```
+
+#### Class inheretance with super()
+
+```
+# Child class
+class CD_account(bank_account):
+    def __init__(self, account_number, balance, CD_maturity):
+        super.__init__(self. account_number, balance)
+        self.CD_maturity = mat
+```
+    
