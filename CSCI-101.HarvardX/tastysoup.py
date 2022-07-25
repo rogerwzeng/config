@@ -38,13 +38,17 @@ class Order(Account):
         self.meal_cost = mc
         self.balance = bal
 
+
     def UpdateBalance(self):
         # frequent eater points
+        points = (self.meal_cost // 15 + 1) * 5
+
+        # application rules
         if self.meal_cost >= 15:
-            self.balance += (self.meal_cost // 15 + 1) * 5
+            self.balance += points
 
             # favors to Harvard & MIT students
-            if self.u_name == 'Harvard':
+            if self.u_name == 'HARVARD':
                 self.balance += 5
             elif self.u_name == 'MIT':
                 self.balance += 3
@@ -80,7 +84,7 @@ submission = True
 
 def main():
     o = list(range(1000, 1006))
-    u = ['Harvard', 'MIT', 'UOFT', '123', 'Harvard']
+    u = ['HARVARD', 'MIT', 'UOFT', '123', 'Harvard']
     m = [100, 90, 81, 75, 160]
     p = [1234, 3214, 12345, 0, 999]
     mc = [15, 30, 45, 80, 13]
