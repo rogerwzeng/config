@@ -61,6 +61,17 @@ class Order(Account):
         if self.__password == 0:
             self.balance = 0
 
+    # play with property decorators 
+    @property
+    def points(self):
+        # frequent eater points
+        return (self.meal_cost // 15 + 1) * 5
+    
+    # set points for each meal
+    @points.setter
+    def points(self, pts):
+        self.points = pts
+
     def getBalance(self):
         return self.balance
 
@@ -96,8 +107,8 @@ def main():
         order = Order(i[0], i[1], i[2], i[3], i[4], i[5])
         order.UpdateBalance()
         order.updateMidterm(i[2])
-        print(f"New Balance: {order.getBalance()} \
-                New midterm: {order.getMidterm()}")
+        print(f"Base Points: {order.points}\
+        New Balance: {order.getBalance()}")
 
 
 if __name__ == '__main__':

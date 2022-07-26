@@ -137,7 +137,52 @@ Output: 1000
 # Child class
 class CD_account(bank_account):
     def __init__(self, account_number, balance, CD_maturity):
-        super.__init__(self. account_number, balance)
+        super.__init__(self. account_number, balance)  # calls parent class init
         self.CD_maturity = mat
 ```
     
+### T-Test
+#### Independent sample t-test
+```
+scipy.stats.ttest_ind()
+```
+degree of freedom: 
+$$ df = n_a + n_b -2 $$
+
+Common variance of two samples:
+
+#### Paired sample t-test
+Q: do the two sample sets belong to the same population? 
+$$ t = \frac{m}{s/\sqrt n} $$
+where: 
+- m: mean of difference
+- n: # of samples, i.e. # of pairs
+- s: standard deviation of difference
+Null hypothesis: m = 0
+```
+scipy.stats.ttest_rel()
+```
+
+#### t-test set-up steps
+1. 1-tail or 2-tail?
+2. paired or unpaired?
+3. equal variance? for this course, False if var_big/var_small > 2 
+
+### ANOVA
+Analysis of variability (signal to noise ratio):
+1. among the sample means (signal)
+2. within the distributions (noise)
+
+Assumptiongs that must be met:
+1. i.d.d.
+2. normal distribution
+3. homoscedasticity
+```
+# One-way ANOVA test
+from scipy.stats import f_oneway
+```
+
+#### Post Hoc Analysis
+```
+from statsmodels.stats.multicomp import pairwise_tukeyhsd, MultiComparison
+```
