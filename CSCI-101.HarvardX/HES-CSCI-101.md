@@ -186,3 +186,45 @@ from scipy.stats import f_oneway
 ```
 from statsmodels.stats.multicomp import pairwise_tukeyhsd, MultiComparison
 ```
+mc = MultiComparison
+tu = pairwise_tukeyhsd(mc)
+
+
+#### Linear Regression Analysis
+Two ways to do it: ols or LinearRegression
+
+```
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+
+result = ols("y ~ X", data=df).fit()
+```
+
+```
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1)
+model = LinearRegression()
+model.fit(x_tran, y_train)  # train the model
+
+y_pred = model.predict(x_test)  # validate model w/ test data set
+
+model.score(x_test, y_test)
+```
+
+#### Confounding variables
+
+Variance Inflation Factor(VIF)
+$$ VIF = \frac{1}{1-R^2}$$
+
+```
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.tools.tools import add_constant
+
+df = add_constant(df)
+vif = variance_inflation_factor(df.values, i)
+
+# if vif > 5, then there is a collinearity problem
+```
+

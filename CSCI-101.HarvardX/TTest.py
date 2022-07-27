@@ -7,7 +7,7 @@ Name: Roger Zeng
 
 import pandas as pd
 import numpy as np
-from scipy.stats import ttest_ind
+from scipy.stats import ttest_ind, ttest_rel
 
 
 # Stock class to store historic data
@@ -20,40 +20,20 @@ class Stock:
     def __init__(self, symbol, daily):
         self.symbol = symbol
         self.daily = daily
+        # try to make is_monotonic=True, not working
+        self.daily.sort_index(inplace=True, ascending=False)
 
     # calculate daily rate of return, first day always zero
+    # notice data series is reverse date ordered (last day first)
     def DRR(self, start, end):
-        series = np.array(self.daily[start:end])
-        yesterday = np.insert(series, 0, series[0])
-        yesterday = np.delete(yesterday, len(yesterday)-1)
+        series = np.array(self.daily.loc[start:end])
+        last_idx = len(series) - 1
+        yesterday = np.insert(series, last_idx, series[last_idx])
+        yesterday = np.delete(yesterday, 0)
         return (series - yesterday)/yesterday
 
 
-# Portforlio class
-# symbols: list of stock symbols that make up the portforlio
-# weights: list of relative weights of stocks, must add up to 1
-class Portforlio:
-    # class constructor
-    def __init__(self, symbols, weights):
-        self.symbols = symbols
-        self.weights = weights
-        self.all = zip(symbols, weights)
-
-        try:
-            assert(len(symbols) == len(weights))
-            assert(sum(weights) == 1)
-        except AssertionError:
-            print("Error in porforlio parameter")
-            return
-
-    # portforlio daily rate of return
-    def port_drr(self, start, end):
-        print("Port DRR called")
-        for i, j in self.all:
-            print(i, j)
-
-
-# portforlio decorator
+# decorator play (NOT used)
 def port_dec(func):
     def inner(var_a):
         print("Decorator Func")
@@ -140,26 +120,33 @@ def main():
         print(f"Best Portforlio = {best_portforlio}")
 
     # 5) WalMart better or worse pre-pandemic
-    pre_start = "1-1-2019"
-    pre_end = "3-14-2020"
-    dur_start = "3-15-2020"
+    # move some dates around to avoid non-existing key warning
+    pre_start = "1-2-2019"
+    pre_end = "3-13-2020"
+    dur_start = "3-16-2020"
     dur_end = "5-25-2021"
 
-    # Avg DRR before and during Covid for Walmart
-    wmt_pre = stocks[1].DRR(pre_start, pre_end).mean()
-    wmt_dur = stocks[1].DRR(dur_start, dur_end).mean()
+    # before and during Covid for Walmart
+    wmt_pre = stocks[1].DRR(pre_start, pre_end)
+    wmt_dur = stocks[1].DRR(dur_start, dur_end)
 
     # Better during Covid?
-    if wmt_dur > wmt_pre:
+    result_5 = ttest_rel(wmt_pre, wmt_dur, alternative='less')
+
+    # process t-test results
+    better_w_pvalue = result_5.pvalue
+
+    if better_w_pvalue < 0.05:
         better_w_covid = 'Yes'
-    elif wmt_dur < wmt_pre:
-        better_w_covid = 'No'
     else:
-        print("Pre and During Covid, Walmart the same!")
+        better_w_covid = 'No'
 
     if not submission:
         print("\nQ5: Walmart better during Covid?")
-        print(f"Better during Covid = {better_w_covid}")
+        print(wmt_pre.mean(), wmt_dur.mean())
+        print(wmt_pre.std(), wmt_dur.std())
+        print(result_5.statistic, result_5.pvalue)
+        print(f"Better with Covid = {better_w_covid}")
 
 
 if __name__ == '__main__':
