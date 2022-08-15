@@ -169,6 +169,7 @@ scipy.stats.ttest_rel()
 3. equal variance? for this course, False if var_big/var_small > 2 
 
 ### ANOVA
+Are my sample sets from the same distribution?
 Analysis of variability (signal to noise ratio):
 1. among the sample means (signal)
 2. within the distributions (noise)
@@ -179,10 +180,13 @@ Assumptiongs that must be met:
 3. homoscedasticity
 ```
 # One-way ANOVA test
+# H_0: all $\mu$s are the same
 from scipy.stats import f_oneway
 ```
 
 #### Post Hoc Analysis
+Tukey's Test: performs pairwise tests when ANOVA test favors H_1
+HSD (honestly significant difference)
 ```
 from statsmodels.stats.multicomp import pairwise_tukeyhsd, MultiComparison
 ```
@@ -198,6 +202,7 @@ import statsmodels.api as sm
 from statsmodels.formula.api import ols
 
 result = ols("y ~ X", data=df).fit()
+print(result.summary())
 ```
 
 ```
@@ -213,7 +218,21 @@ y_pred = model.predict(x_test)  # validate model w/ test data set
 model.score(x_test, y_test)
 ```
 
+#### R Squared
+Q: How well does the model explain the observed data?
+- SST - dispersion of observation around its mean
+- SSR - dispersion of model predictions around observation mean
+- SSE - sum of squared error between observation and model prediction
+
+SST = SSR + SSE
+
+$$ R^2 = \frac{SSR}{SST} = 1 - \frac{SSE}{SST} , \in [0, 1]$$
+
+If $(1-R^2) \in [0,1]$ is close to 1, the correlation is strong between x and y
+
+
 #### Confounding variables
+Q: Are some of the independent varianbles in fact dependent on each other?
 
 Variance Inflation Factor(VIF)
 $$ VIF = \frac{1}{1-R^2}$$
@@ -226,5 +245,64 @@ df = add_constant(df)
 vif = variance_inflation_factor(df.values, i)
 
 # if vif > 5, then there is a collinearity problem
+```
+
+### Logistic Regression
+Q: Can we predict categorical outcomes (2 or more)?
+
+$$ \mathbb P(x) = \frac{e^x}{1-e^x} $$
+```
+from sklearn.model_selection import trian_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+
+# import df and split into x y
+x_train, y_train, x_test, y_test = train_test_split()
+logmodel = LogisticRegression
+logmodel.fit(x_train, y_train)
+logmodel.score(x_test, y_test)
+y_pred = logmodel.predict(x_test)
+rpt = classification_report(y_test, y_pred)
+```
+
+Precision: % of correct positive predictions (aka sensitiviy in two category tests)
+$$precision = \frac{correct\ positive}{correct\ positive + false\ positive}$$
+Recall: % of positive predictions predicted (aka specificity in two category tests)
+$$recall = \frac{correct\ positive}{correct\ positive + false\ negative}$$
+
+### Natural Language Processing (NLP)
+```
+import nltk
+(nltk.download('all')
+
+from nltk.tokenize import word_tokenize  # tokenize
+from nltk.corpus import stopwords  # filter w/ stopwords
+
+# normally only use one of the following filtering strategy
+from nltk.stem import PorterStemmer  # filter w/ grouping
+from nltk.stem import WordNetLemmatizer  # obtain the word stem
+
+# frequency distribution 
+from nltk import FreqDist  # frequency distribution of words
+
+# sentiment analysis
+import nltk.sentiment.vader import SentimentIntensityAnalyzer as sia
+
+# load review & tokenize
+review_text = "this is a movie review ..."
+word_tokens = word_tokenizer(review_text.lower())
+
+# filter out stopwords (meaningless words)
+mystopwords = set(stopwords.words('english')) 
+
+# put non-stopwords into a list called 'filtered_words'
+
+# further filter w/ one of the filter methods 
+
+# obtain the bag of stemmed words from above step
+
+# calculate frequency of words
+
+# use polarity_scores() to gauge sentiment
 ```
 
