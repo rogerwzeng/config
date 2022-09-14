@@ -50,12 +50,13 @@ Plug 'jistr/vim-nerdtree-tabs'
 Plug 'ervandew/supertab'
 Plug 'vim-scripts/grep.vim'
 "Plug 'klen/python-mode'
-"Plug 'davidhalter/jedi-vim'
-Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
+Plug 'davidhalter/jedi-vim'
+"Plug 'falvesaq/Nvim-R', {'branch': 'stable'}
 "Plug 'ncm2/ncm2'
 "Plug 'roxma/nvim-yarp'
 "Plug 'gaalcaras/ncm-R'
 "Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
+"Plug 'lervag/vimtex'
 """Debugging
 Plug 'puremourning/vimspector'
 Plug 'majutsushi/tagbar'
@@ -74,6 +75,8 @@ Plug 'airblade/vim-gitgutter'
 Plug 'dense-analysis/ale'
 """Markdown Integration
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
 """Unused
 "Plug 'vim-scripts/CSApprox'
 "Plug 'editor-bootstrap/vim-bootstrap-updater'
@@ -211,10 +214,14 @@ nnoremap <Leader>sp :setlocal spell spelllang=en_us<CR>
 nnoremap <Leader>usp :set nospell<CR>
 
 "" Disable the blinking cursor.
-"set gcr=a:blinkon0
-
+highlight Cursor guifg=white guibg=black
+highlight iCursor guifg=white guibg=steelblue
+" set guicursor=n-v-c:block-Cursor
+set guicursor+=i:ver100-iCursor
+set guicursor+=i:blinkwait10
+set gcr=a:blinkon0
+set gcr=a:block-cursor
 set scrolloff=3
-
 
 "" Status bar
 set laststatus=2
@@ -256,6 +263,10 @@ cnoreabbrev WQ wq
 cnoreabbrev W w
 cnoreabbrev Q q
 cnoreabbrev Qall qall
+
+" experimental 
+"Markdown abbreviations
+inoreabbrev 1/ \frac{1}{
 
 "" NERDTree configuration
 let g:NERDTreeChDirMode=2
@@ -406,7 +417,7 @@ let g:ale_lint_on_save=1
 nnoremap <leader>ln :ALENextWrap<CR>
 nnoremap <leader>lp :ALEPreviousWrap<CR>
 
-" color scheumes
+" color schemes
 let g:oceanic_material_allow_reverse=1
 
 " Tagbar
@@ -458,7 +469,7 @@ vnoremap D :m '>+1<CR>gv=gv
 vnoremap B :m '<-2<CR>gv=gv
 
 "" Open current line on GitHub
-nnoremap <Leader>o :.Gbrowse<CR>
+nnoremap <Leader>o :.GBrowse<CR>
 
 "*****************************************************************************
 "" Custom configs
@@ -468,10 +479,19 @@ nnoremap <Leader>o :.Gbrowse<CR>
 " vim-python
 augroup vimrc-python
   autocmd!
-  autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8 colorcolumn=79
+  autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8 colorcolumn=81
       \ formatoptions+=croq softtabstop=4
       \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
 augroup END
+
+" Nvim-R config
+"augroup vimrc-r
+"   autocmd FileType r if string(g:SendCmdToR) == "function('SendCmdToR_fake')" | call StartR("R") | endif
+"   autocmd FileType R if string(g:SendCmdToR) == "function('SendCmdToR_fake')" | call StartR("R") | endif
+"   autocmd FileType rmd if string(g:SendCmdToR) == "function('SendCmdToR_fake')" | call StartR("R") | endif
+"   autocmd FileType Rmd if string(g:SendCmdToR) == "function('SendCmdToR_fake')" | call StartR("R") | endif
+"   autocmd VimLeave * if exists("g:SendCmdToR") && string(g:SendCmdToR) != "function('SendCmdToR_fake')" | call RQuit("nosave") | endif
+"augroup END
 
 " jedi-vim
 let g:jedi#auto_initialization = 1
@@ -608,7 +628,7 @@ let g:mkdp_refresh_slow = 0
 " set to 1, the MarkdownPreview command can be use for all files,
 " by default it can be use in markdown file
 " default: 0
-let g:mkdp_command_for_global = 0
+let g:mkdp_command_for_global = 1
 
 " set to 1, preview server available to others in your network
 " by default, the server listens on localhost (127.0.0.1)
@@ -716,3 +736,9 @@ let g:pymode_run_bind = "<C-S-e>"
 
 " Override view python doc key shortcut to Ctrl-Shift-d
 let g:pymode_doc_bind = "<C-S-d>"
+
+" Language interpretor
+let g:markdown_interp_languages = ['python', 'r', 'sh=bash', 'bash', 'console=bash']
+
+" Run code block in markdown files
+nnoremap <silent> <buffer> Z! :<C-U>call ft#markdown#eval()<CR>
